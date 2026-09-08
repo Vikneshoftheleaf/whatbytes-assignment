@@ -377,7 +377,7 @@ This project can run as a Vercel Python function when the repository includes th
 
 4. Add custom domains to both host/origin variables when applicable. Vercel's `VERCEL_URL` is also accepted automatically as an allowed host.
 5. Deploy the project.
-   The Vercel catch-all route invokes `api/index.py` without changing the original path, so the dashboard remains at `/` and API requests remain under `/api/`.
+   The Vercel catch-all route invokes `api/index.py` without changing the original path, so the dashboard remains at `/` and API requests remain under `/api/`. Do not change the rewrite destination to `/`, because that sends every request back to the dashboard root.
 6. Run migrations against Supabase from a local terminal using the production URL:
 
     ```powershell
@@ -412,6 +412,10 @@ Log in first and send the access token exactly as:
 ```http
 Authorization: Bearer <access-token>
 ```
+
+### The deployment returns `Forbidden (CSRF cookie not set)`
+
+The API uses JWT authentication, not Django session authentication. API paths are configured to skip Django's browser-session CSRF cookie check while the admin and non-API dashboard paths retain normal CSRF protection. Redeploy after pulling the latest `config/middleware.py`, `config/settings.py`, and `vercel.json` changes.
 
 ### The app uses SQLite instead of Supabase
 
