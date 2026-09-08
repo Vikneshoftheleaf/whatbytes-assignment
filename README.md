@@ -371,11 +371,11 @@ This project can run as a Vercel Python function when the repository includes th
     DJANGO_SECRET_KEY=<long-random-secret>
     DJANGO_DEBUG=False
     DATABASE_URL=<Supabase-connection-string>
-    DJANGO_ALLOWED_HOSTS=<your-project>.vercel.app
-    DJANGO_CSRF_TRUSTED_ORIGINS=https://<your-project>.vercel.app
+   DJANGO_ALLOWED_HOSTS=whatbytess.vercel.app
+   DJANGO_CSRF_TRUSTED_ORIGINS=https://whatbytess.vercel.app
     ```
 
-4. Add custom domains to both host/origin variables when applicable.
+4. Add custom domains to both host/origin variables when applicable. Vercel's `VERCEL_URL` is also accepted automatically as an allowed host.
 5. Deploy the project.
 6. Run migrations against Supabase from a local terminal using the production URL:
 
