@@ -162,7 +162,7 @@ The API base URL is:
 http://127.0.0.1:8000/api/
 ```
 
-The dashboard provides login, registration, patient management, doctor management, assignment management, search, and logout. All data operations use the REST API and require a valid JWT after login.
+The dashboard provides login, registration, patient management, doctor management, assignment management, search, logout, and a developer-focused **Test API** tab. The Test API tab can send `GET`, `POST`, `PUT`, `PATCH`, and `DELETE` requests, include the current JWT automatically, edit JSON request bodies, copy the access token, copy equivalent cURL commands, and inspect formatted responses with status and timing. All data operations use the REST API and require a valid JWT after login.
 
 ## Authentication API
 
