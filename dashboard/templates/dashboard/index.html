@@ -1,0 +1,55 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CareDesk | Healthcare workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'dashboard/styles.css' %}">
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+  <section id="auth-screen" class="auth-shell">
+    <div class="auth-intro">
+      <span class="eyebrow">CareDesk / clinical operations</span>
+      <h1>A calmer way to coordinate care.</h1>
+      <p>Keep patient records, care teams, and assignments moving from one focused workspace.</p>
+      <div class="intro-rule"><span></span><span></span><span></span></div>
+    </div>
+    <div class="auth-panel">
+      <div class="brand-mark">CD</div>
+      <h2 id="auth-title">Welcome back</h2>
+      <p id="auth-subtitle">Sign in to your healthcare workspace.</p>
+      <form id="auth-form">
+        <label id="name-field" class="hidden">Full name<input id="auth-name" type="text" autocomplete="name"></label>
+        <label>Email<input id="auth-email" type="email" required autocomplete="email"></label>
+        <label>Password<input id="auth-password" type="password" minlength="8" required autocomplete="current-password"></label>
+        <button class="primary-button" type="submit" id="auth-submit">Sign in <span>→</span></button>
+      </form>
+      <button class="text-button" id="auth-toggle" type="button">New here? Create an account</button>
+      <p id="auth-error" class="form-error"></p>
+    </div>
+  </section>
+
+  <div id="app-shell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="brand-mark">CD</div><div><strong>CareDesk</strong><small>health workspace</small></div></div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview"><span>◈</span> Overview</button>
+        <button class="nav-item" data-view="patients"><span>♧</span> Patients</button>
+        <button class="nav-item" data-view="doctors"><span>✚</span> Doctors</button>
+        <button class="nav-item" data-view="mappings"><span>⌁</span> Assignments</button>
+      </nav>
+      <div class="sidebar-footer"><span class="online-dot"></span> API connected<button id="logout-button" class="logout-button">Sign out</button></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><div><span class="eyebrow">Tuesday, 08 September 2026</span><h2 id="page-title">Good morning</h2></div><div class="user-chip"><span id="user-initial">U</span><span id="user-name">User</span></div></header>
+      <div id="page-content"></div>
+    </main>
+  </div>
+  <script src="{% static 'dashboard/app.js' %}"></script>
+</body>
+</html>
