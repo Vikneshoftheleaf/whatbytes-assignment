@@ -377,6 +377,7 @@ This project can run as a Vercel Python function when the repository includes th
 
 4. Add custom domains to both host/origin variables when applicable. Vercel's `VERCEL_URL` is also accepted automatically as an allowed host.
 5. Deploy the project.
+   The Vercel catch-all route invokes `api/index.py` without changing the original path, so the dashboard remains at `/` and API requests remain under `/api/`.
 6. Run migrations against Supabase from a local terminal using the production URL:
 
     ```powershell
