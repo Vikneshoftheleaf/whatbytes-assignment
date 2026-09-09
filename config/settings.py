@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,9 +18,11 @@ ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",") if host.strip
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
-SECURE_SSL_REDIRECT = os.getenv("DJANGO_SECURE_SSL_REDIRECT", "false").lower() == "true"
-SESSION_COOKIE_SECURE = os.getenv("DJANGO_SESSION_COOKIE_SECURE", "false").lower() == "true"
-CSRF_COOKIE_SECURE = os.getenv("DJANGO_CSRF_COOKIE_SECURE", "false").lower() == "true"
+
+is_vercel = bool(os.getenv("VERCEL_URL"))
+SECURE_SSL_REDIRECT = is_vercel or os.getenv("DJANGO_SECURE_SSL_REDIRECT", "false").lower() == "true"
+SESSION_COOKIE_SECURE = is_vercel or os.getenv("DJANGO_SESSION_COOKIE_SECURE", "false").lower() == "true"
+CSRF_COOKIE_SECURE = is_vercel or os.getenv("DJANGO_CSRF_COOKIE_SECURE", "false").lower() == "true"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -62,7 +65,12 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = "config.wsgi.application"
 
-database_url = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
+database_url = os.getenv("DATABASE_URL")
+if not database_url and not DEBUG:
+    raise ImproperlyConfigured("DATABASE_URL must be set to the Supabase Postgres connection string in production.")
+if not database_url:
+    database_url = "sqlite:///db.sqlite3"
+
 DATABASES = {
     "default": dj_database_url.config(
         default=database_url,
