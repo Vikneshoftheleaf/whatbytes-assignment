@@ -9,10 +9,17 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me-use-a-longer-local-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
-allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,whatbytess.vercel.app")
+
+allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0")
 if os.getenv("VERCEL_URL"):
-    allowed_hosts = f"{allowed_hosts},{os.environ['VERCEL_URL']}"
+    allowed_hosts = f"{allowed_hosts},{os.environ['VERCEL_URL'].strip()}"
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts.split(",") if host.strip()]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+SECURE_SSL_REDIRECT = os.getenv("DJANGO_SECURE_SSL_REDIRECT", "false").lower() == "true"
+SESSION_COOKIE_SECURE = os.getenv("DJANGO_SESSION_COOKIE_SECURE", "false").lower() == "true"
+CSRF_COOKIE_SECURE = os.getenv("DJANGO_CSRF_COOKIE_SECURE", "false").lower() == "true"
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -55,12 +62,13 @@ TEMPLATES = [
 ]
 WSGI_APPLICATION = "config.wsgi.application"
 
+database_url = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
 DATABASES = {
     "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
+        default=database_url,
         conn_max_age=600,
         conn_health_checks=True,
-        ssl_require=bool(os.getenv("DATABASE_URL")),
+        ssl_require=(database_url.startswith("postgres") or database_url.startswith("postgresql")),
     )
 }
 
@@ -75,7 +83,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "dashboard" / "static"]
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
@@ -84,9 +92,16 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
+trusted_origins = os.getenv(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    "http://localhost:8000,https://localhost:8000,http://127.0.0.1:8000,https://127.0.0.1:8000",
+)
+if os.getenv("VERCEL_URL"):
+    vercel_host = os.environ["VERCEL_URL"].strip()
+    trusted_origins = f"{trusted_origins},https://{vercel_host},http://{vercel_host}"
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    for origin in trusted_origins.split(",")
     if origin.strip()
 ]
 

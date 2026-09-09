@@ -1,3 +1,7 @@
+import os
+
+from django.conf import settings
+from django.test import SimpleTestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -26,3 +30,20 @@ class PatientAccessTests(APITestCase):
         response = self.client.get("/api/patients/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+
+class DeployConfigTests(SimpleTestCase):
+    def test_deployment_security_and_static_settings_are_ready_for_vercel(self):
+        self.assertEqual(settings.STATIC_URL, "/static/")
+        self.assertEqual(settings.STATIC_ROOT.name, "staticfiles")
+        self.assertEqual(settings.SECURE_PROXY_SSL_HEADER, ("HTTP_X_FORWARDED_PROTO", "https"))
+        self.assertTrue(settings.USE_X_FORWARDED_HOST)
+
+        secure_redirect = os.getenv("DJANGO_SECURE_SSL_REDIRECT", "false").lower() == "true"
+        session_secure = os.getenv("DJANGO_SESSION_COOKIE_SECURE", "false").lower() == "true"
+        csrf_secure = os.getenv("DJANGO_CSRF_COOKIE_SECURE", "false").lower() == "true"
+
+        self.assertEqual(settings.SECURE_SSL_REDIRECT, secure_redirect)
+        self.assertEqual(settings.SESSION_COOKIE_SECURE, session_secure)
+        self.assertEqual(settings.CSRF_COOKIE_SECURE, csrf_secure)
+        self.assertTrue(any("whatbytess.vercel.app" in origin for origin in settings.CSRF_TRUSTED_ORIGINS))
