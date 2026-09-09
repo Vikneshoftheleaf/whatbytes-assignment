@@ -35,7 +35,7 @@ class PatientAccessTests(APITestCase):
 class DeployConfigTests(SimpleTestCase):
     def test_deployment_security_and_static_settings_are_ready_for_vercel(self):
         self.assertEqual(settings.STATIC_URL, "/static/")
-        self.assertEqual(settings.STATIC_ROOT.name, "staticfiles")
+        self.assertEqual(settings.STATIC_ROOT.name, "static")
         self.assertEqual(settings.SECURE_PROXY_SSL_HEADER, ("HTTP_X_FORWARDED_PROTO", "https"))
         self.assertTrue(settings.USE_X_FORWARDED_HOST)
 
